@@ -1,4 +1,4 @@
-﻿# Загрузить стандартную библиотеку Python и библиотеку DesignScript
+﻿# Getting everything imported into Python
 import sys
 import clr
 import math
@@ -16,19 +16,20 @@ clr.AddReference("RevitServices")
 import RevitServices
 from RevitServices.Persistence import DocumentManager
 from RevitServices.Transactions import TransactionManager
-# Введенные в этом узле данные сохраняется в виде списка в переменных IN.
 dataEnteringNode = IN
 Xlist = []
 Ylist = []
 Zlist = []
 SunHeight = []
-
+#getting the document from the document manager
 doc = DocumentManager.Instance.CurrentDBDocument
+#Getting the active view
 view = doc.ActiveView
+#Getting the Sunsettings from the current view, currently displayed in Revit
 sunSettings = view.SunAndShadowSettings
 initialDirection = XYZ.BasisY
 altitude = sunSettings.GetFrameAltitude(sunSettings.ActiveFrame)
-## Transaction
+## Starting a transaction
 TransactionManager.Instance.EnsureInTransaction(doc)
 for i in range (1, int(sunSettings.NumberOfFrames +1)):
 	sunSettings.ActiveFrame = i
@@ -41,11 +42,7 @@ for i in range (1, int(sunSettings.NumberOfFrames +1)):
 	Xlist.append(sunDirection.X*100)
 	Ylist.append(sunDirection.Y*100)
 	Zlist.append(sunDirection.Z*100)
-	
 	SunHeight.append(math.degrees(sunSettings.GetFrameAltitude(sunSettings.ActiveFrame)))
-	
 TransactionManager.Instance.TransactionTaskDone()
-# Разместите код под этой строкой
-
-# Назначьте вывод переменной OUT.
+# Althought we may not use the Zlist but it's a good idea to get it anyway.
 OUT = [Xlist, Ylist, Zlist,SunHeight]
